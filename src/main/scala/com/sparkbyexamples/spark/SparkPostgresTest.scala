@@ -41,7 +41,14 @@ object SparkPostgresTest extends App{
 
   val meetings_table = spark.read.jdbc(jdbcUrl, "zoom._airbyte_raw_meetings", connectionProperties)
 
-  meetings_table.printSchema
+  val meetings_attendance_table = spark.read.jdbc(jdbcUrl, "zoom._airbyte_meetings_attendance", connectionProperties)
+
+  val organizerToMeetings = meetings_table.groupBy("hostId")
+
+  val organizerToTotalMeetingTime = organizerToMeetings.sum("duration")
+
+  val attendeeToMeeting = meetings_attendance_table.groupBy("hostId")
+
 
 
 }
